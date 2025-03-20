@@ -2,6 +2,8 @@ package com.mehmetgenc.service
 
 import com.mehmetgenc.dto.*
 import com.mehmetgenc.exceptions.AccountNotFoundException
+import com.mehmetgenc.exceptions.InsufficientFundsException
+import com.mehmetgenc.exceptions.InvalidAmountException
 import com.mehmetgenc.model.Account
 import com.mehmetgenc.model.TransactionType
 import com.mehmetgenc.repository.AccountRepository
@@ -22,16 +24,18 @@ class AccountService(
     }
 
     suspend fun deposit(depositDTO: DepositWithdrawDTO) {
-        if (depositDTO.amount <= 0) throw IllegalArgumentException("Deposit amount must be greater than zero")
+        val account = getAccountOrThrow(depositDTO.id)
 
-        accountRepository.deposit(depositDTO.id, depositDTO.amount)
-        transactionRepository.recordTransaction(depositDTO.id, TransactionType.DEPOSIT, depositDTO.amount)
+        if (depositDTO.amount <= 0) throw InvalidAmountException(depositDTO.amount)
+
+        accountRepository.deposit(account.id!!, depositDTO.amount)
+        transactionRepository.recordTransaction(account.id, TransactionType.DEPOSIT, depositDTO.amount)
     }
 
     suspend fun withdraw(withdrawDTO: DepositWithdrawDTO) {
         val account = getAccountOrThrow(withdrawDTO.id)
-        if (withdrawDTO.amount <= 0) throw IllegalArgumentException("Withdrawal amount must be greater than zero")
-        if (account.balance < withdrawDTO.amount) throw IllegalArgumentException("Insufficient funds")
+        if (withdrawDTO.amount <= 0) throw InvalidAmountException(withdrawDTO.amount)
+        if (account.balance < withdrawDTO.amount) throw InsufficientFundsException(account.id!!, account.balance, withdrawDTO.amount)
 
         accountRepository.withdraw(withdrawDTO.id, withdrawDTO.amount)
         transactionRepository.recordTransaction(withdrawDTO.id, TransactionType.WITHDRAW, withdrawDTO.amount)
@@ -41,8 +45,10 @@ class AccountService(
         val fromAccount = getAccountOrThrow(transferDTO.fromId)
         val toAccount = getAccountOrThrow(transferDTO.toId)
 
-        if (transferDTO.amount <= 0) throw IllegalArgumentException("Amount must be greater than zero")
-        if (fromAccount.balance < transferDTO.amount) throw IllegalArgumentException("Insufficient funds")
+        if (transferDTO.amount <= 0) throw InvalidAmountException(transferDTO.amount)
+        if (fromAccount.balance < transferDTO.amount) {
+            throw InsufficientFundsException(fromAccount.id!!, fromAccount.balance, transferDTO.amount)
+        }
 
         accountRepository.transfer(transferDTO.fromId, transferDTO.toId, transferDTO.amount)
 
