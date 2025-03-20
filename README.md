@@ -1,43 +1,126 @@
-# ktor-bank
+# Ktor Banking API
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
-
-Here are some useful links to get you started:
-
-- [Ktor Documentation](https://ktor.io/docs/home.html)
-- [Ktor GitHub page](https://github.com/ktorio/ktor)
-- The [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). You'll need to [request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up) to join.
+## Overview
+This project is a simple banking application built with **Ktor**, using **Exposed** as the database ORM and **H2** as the in-memory database. The API supports basic banking operations such as account creation, deposits, withdrawals, and money transfers.
 
 ## Features
+- Create a new bank account
+- Get account details by ID
+- Deposit money into an account
+- Withdraw money from an account
+- Transfer money between accounts
 
-Here's a list of features included in this project:
+## Technologies Used
+- **Ktor** (Backend framework)
+- **Kotlin** (Programming language)
+- **Exposed** (Database ORM)
+- **H2** (In-memory database)
+- **Ktor Serialization** (JSON support)
+- **Netty** (Server engine)
 
-| Name                                                                   | Description                                                                        |
-| ------------------------------------------------------------------------|------------------------------------------------------------------------------------ |
-| [Routing](https://start.ktor.io/p/routing)                             | Provides a structured routing DSL                                                  |
-| [kotlinx.serialization](https://start.ktor.io/p/kotlinx-serialization) | Handles JSON serialization using kotlinx.serialization library                     |
-| [Content Negotiation](https://start.ktor.io/p/content-negotiation)     | Provides automatic content conversion according to Content-Type and Accept headers |
-| [Exposed](https://start.ktor.io/p/exposed)                             | Adds Exposed database to your application                                          |
-| [Call Logging](https://start.ktor.io/p/call-logging)                   | Logs client requests                                                               |
-
-## Building & Running
-
-To build or run the project, use one of the following tasks:
-
-| Task                          | Description                                                          |
-| -------------------------------|---------------------------------------------------------------------- |
-| `./gradlew test`              | Run the tests                                                        |
-| `./gradlew build`             | Build everything                                                     |
-| `buildFatJar`                 | Build an executable JAR of the server with all dependencies included |
-| `buildImage`                  | Build the docker image to use with the fat JAR                       |
-| `publishImageToLocalRegistry` | Publish the docker image locally                                     |
-| `run`                         | Run the server                                                       |
-| `runDocker`                   | Run using the local docker image                                     |
-
-If the server starts successfully, you'll see the following output:
-
+## Project Structure
 ```
-2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
+/src/main/kotlin/com/mehmetgenc
+  /dto        -> Data Transfer Objects (DTOs)
+  /model      -> Database models
+  /repository -> Database operations (CRUD)
+  /service    -> Business logic
+  /routes     -> API endpoints
+  /config     -> Ktor configuration (Database, Serialization, Routing, etc.)
+  Application.kt -> Main Ktor application file
 ```
+
+## Installation
+### Prerequisites
+- JDK 17+
+- Kotlin 1.9+
+- Gradle
+
+### Clone the Repository
+```sh
+git clone https://github.com/mehmetgencv/ktor-banking-api.git
+cd ktor-banking-api
+```
+
+### Build and Run the Project
+```sh
+gradle build
+```
+
+Run the application:
+```sh
+gradle run
+```
+
+The server will start on `http://localhost:8080`.
+
+## API Endpoints
+
+### Create Account
+**POST** `/accounts`
+```json
+{
+  "name": "John Doe",
+  "initialBalance": 5000.0
+}
+```
+**Response:**
+```json
+1 // Account ID
+```
+
+### Get Account by ID
+**GET** `/accounts/{id}`
+
+**Response:**
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "balance": 5000.0
+}
+```
+
+### Deposit Money
+**PUT** `/accounts/deposit`
+```json
+{
+  "id": 1,
+  "amount": 1000.0
+}
+```
+**Response:**
+```json
+"Deposit successful"
+```
+
+### Withdraw Money
+**PUT** `/accounts/withdraw`
+```json
+{
+  "id": 1,
+  "amount": 2000.0
+}
+```
+**Response:**
+```json
+"Withdrawal successful"
+```
+
+### Transfer Money
+**POST** `/accounts/transfer`
+```json
+{
+  "fromId": 1,
+  "toId": 2,
+  "amount": 1500.0
+}
+```
+**Response:**
+```json
+"Transfer successful"
+```
+
+## License
+This project is licensed under the MIT License.
 
