@@ -73,19 +73,18 @@ class AccountRepository {
     private suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
-    fun getAllAccounts(): List<Account> {
-        return runBlocking {
-            dbQuery {
-                Accounts.selectAll()
-                    .map {
-                        Account(
-                            id = it[Accounts.id],
-                            name = it[Accounts.name],
-                            balance = it[Accounts.balance]
-                        )
-                    }
-            }
+    suspend fun getAllAccounts(): List<Account> {
+        return dbQuery {
+            Accounts.selectAll()
+                .map {
+                    Account(
+                        id = it[Accounts.id],
+                        name = it[Accounts.name],
+                        balance = it[Accounts.balance]
+                    )
+                }
         }
-
     }
+
 }
+

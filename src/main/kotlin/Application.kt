@@ -3,6 +3,7 @@ package com.mehmetgenc
 import com.mehmetgenc.config.configureSerialization
 import com.mehmetgenc.config.configureDatabase
 import com.mehmetgenc.repository.AccountRepository
+import com.mehmetgenc.repository.TransactionRepository
 import com.mehmetgenc.routes.accountRoutes
 import com.mehmetgenc.service.AccountService
 import io.ktor.server.application.*
@@ -18,7 +19,8 @@ fun Application.module() {
     configureDatabase()
 
     val accountRepository = AccountRepository()
-    val accountService = AccountService(accountRepository)
+    val transactionRepository = TransactionRepository()
+    val accountService = AccountService(accountRepository, transactionRepository)
 
     accountRoutes(accountService)
 }

@@ -66,7 +66,7 @@ The server will start on `http://localhost:8080`.
 ```
 **Response:**
 ```json
-1 // Account ID
+  1
 ```
 
 ### Get Account by ID

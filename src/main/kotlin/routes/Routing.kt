@@ -30,11 +30,7 @@ fun Application.accountRoutes(accountService: AccountService) {
 
         get("/accounts") {
             val account = accountService.getAllAccounts()
-            if (account != null) {
-                call.respond(HttpStatusCode.OK, account)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
+            call.respond(HttpStatusCode.OK, account)
         }
 
         put("/accounts/deposit") {
@@ -60,6 +56,16 @@ fun Application.accountRoutes(accountService: AccountService) {
                 call.respond(HttpStatusCode.OK, "Transfer successful")
             } catch (e: IllegalArgumentException) {
                 call.respond(HttpStatusCode.BadRequest, e.message ?: "Error")
+            }
+        }
+
+        get("/accounts/{id}/transactions") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            if (id != null) {
+                val transactions = accountService.getTransactionHistory(id)
+                call.respond(HttpStatusCode.OK, transactions)
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid account ID")
             }
         }
     }
