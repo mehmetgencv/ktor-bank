@@ -13,7 +13,7 @@ object Accounts : Table() {
 
 @Serializable
 data class Account(
-    val id: Int,
+    val id: Int? = null,
     val name: String,
     val balance: Double
 )

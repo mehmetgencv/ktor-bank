@@ -2,6 +2,7 @@ package com.mehmetgenc
 
 import com.mehmetgenc.config.configureSerialization
 import com.mehmetgenc.config.configureDatabase
+import com.mehmetgenc.config.configureExceptionHandling
 import com.mehmetgenc.repository.AccountRepository
 import com.mehmetgenc.repository.TransactionRepository
 import com.mehmetgenc.routes.accountRoutes
@@ -17,6 +18,7 @@ fun main() {
 fun Application.module() {
     configureSerialization()
     configureDatabase()
+    configureExceptionHandling()
 
     val accountRepository = AccountRepository()
     val transactionRepository = TransactionRepository()
